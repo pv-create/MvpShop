@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MvpShop</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Forum&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-light site-nav mb-4">
+            <div class="container">
+                <a class="navbar-brand fw-semibold" href="/">
+                    <span class="brand-mark">ᠮ</span>
+                    <span>MvpShop</span>
+                </a>
+                <div class="navbar-nav">
+                    <a class="nav-link" href="/">Каталог</a>
+                    <a class="nav-link" href="/cart">Корзина</a>
+                    <a class="nav-link" href="/admin">Админка</a>
+                    <a class="nav-link" href="/privacy">О проекте</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container pb-4" role="main">
+        @RenderBody()
+    </main>
+
+    <footer class="footer">
+        <div class="container py-3 d-flex flex-column flex-md-row justify-content-between gap-2">
+            <span>&copy; 2026 - MvpShop</span>
+            <a class="footer-link text-decoration-none" href="/admin">Управление каталогом</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

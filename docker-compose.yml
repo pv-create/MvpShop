@@ -1,0 +1,54 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: mvp-shop-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: mvp_shop
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d mvp_shop"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  migrator:
+    build:
+      context: .
+      dockerfile: Dockerfile.migrator
+    container_name: mvp-shop-migrator
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=mvp_shop;Username=postgres;Password=postgres
+      Seed__ForceReseedProducts: "true"
+    restart: "no"
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mvp-shop-web
+    restart: unless-stopped
+    depends_on:
+      migrator:
+        condition: service_completed_successfully
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=mvp_shop;Username=postgres;Password=postgres
+      Seed__ApplyMigrationsOnStartup: "false"
+      Seed__ForceReseedProducts: "false"
+      Telegram__BotToken: ${TELEGRAM_BOT_TOKEN:-}
+      Telegram__ChatId: ${TELEGRAM_CHAT_ID:-}
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:

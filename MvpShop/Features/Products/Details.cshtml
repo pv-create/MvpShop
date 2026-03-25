@@ -1,0 +1,71 @@
+@model MvpShop.Data.Entities.Product
+@{
+    ViewData["Title"] = Model.Name;
+    var imageUrl = string.IsNullOrWhiteSpace(Model.ImageUrl)
+        ? "https://placehold.co/1200x800/f4f4f0/222?text=MvpShop"
+        : Model.ImageUrl;
+}
+
+<div class="row g-4 align-items-start">
+    <div class="col-lg-6">
+        <img src="@imageUrl" class="img-fluid rounded-4 border" alt="@Model.Name" />
+    </div>
+    <div class="col-lg-6">
+        <div class="mb-3">
+            <a class="link-secondary text-decoration-none" href="/">← Назад в каталог</a>
+        </div>
+        <h1 class="mb-3">@Model.Name</h1>
+        <div class="display-6 fw-semibold mb-4">@Model.Price.ToString("N2") ₽</div>
+
+        <p class="lead">@(string.IsNullOrWhiteSpace(Model.Description) ? "Подробное описание товара пока не заполнено." : Model.Description)</p>
+
+        <div class="d-flex flex-wrap gap-2 mt-4">
+            <form id="add-to-cart-form" method="post" action="/cart/add-item">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="productId" value="@Model.Id" />
+                <button id="add-to-cart-button" class="btn btn-primary btn-lg" type="submit">В корзину</button>
+            </form>
+            <a class="btn btn-outline-secondary btn-lg" href="/admin">Админка</a>
+        </div>
+
+        <p id="add-to-cart-result" class="text-success mt-3 mb-0" hidden></p>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (() => {
+            const form = document.getElementById("add-to-cart-form");
+            const button = document.getElementById("add-to-cart-button");
+            const result = document.getElementById("add-to-cart-result");
+
+            form?.addEventListener("submit", async (event) => {
+                event.preventDefault();
+
+                button.disabled = true;
+
+                const response = await fetch(form.action, {
+                    method: "POST",
+                    body: new FormData(form),
+                    headers: { "X-Requested-With": "XMLHttpRequest" }
+                });
+
+                button.disabled = false;
+
+                if (!response.ok) {
+                    result.hidden = false;
+                    result.classList.remove("text-success");
+                    result.classList.add("text-danger");
+                    result.textContent = "Не удалось добавить товар в корзину.";
+                    return;
+                }
+
+                const payload = await response.json();
+                result.hidden = false;
+                result.classList.remove("text-danger");
+                result.classList.add("text-success");
+                result.textContent = `Товар добавлен. В корзине ${payload.totalQuantity} шт.`;
+            });
+        })();
+    </script>
+}

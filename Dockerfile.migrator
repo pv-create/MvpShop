@@ -1,0 +1,18 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+
+COPY MvpShop/MvpShop.csproj MvpShop/
+COPY MvpShop.Migrator/MvpShop.Migrator.csproj MvpShop.Migrator/
+RUN dotnet restore MvpShop.Migrator/MvpShop.Migrator.csproj
+
+COPY MvpShop/. MvpShop/
+COPY MvpShop.Migrator/. MvpShop.Migrator/
+WORKDIR /src/MvpShop.Migrator
+RUN dotnet publish MvpShop.Migrator.csproj -c Release -o /app/publish /p:UseAppHost=false
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+WORKDIR /app
+
+COPY --from=build /app/publish .
+
+ENTRYPOINT ["dotnet", "MvpShop.Migrator.dll"]

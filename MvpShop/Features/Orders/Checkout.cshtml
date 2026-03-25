@@ -1,0 +1,79 @@
+@model MvpShop.Features.Orders.CheckoutViewModel
+@{
+    ViewData["Title"] = "Оформление заказа";
+}
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <h1 class="mb-3">Оформление заказа</h1>
+                <p class="text-muted">Заполните контакты, и мы создадим заказ на основе текущей корзины.</p>
+
+                <form method="post" class="mt-4">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Input.CustomerName" class="form-label"></label>
+                        <input asp-for="Input.CustomerName" class="form-control" />
+                        <span asp-validation-for="Input.CustomerName" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Input.CustomerEmail" class="form-label"></label>
+                        <input asp-for="Input.CustomerEmail" class="form-control" />
+                        <span asp-validation-for="Input.CustomerEmail" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Input.CustomerPhone" class="form-label"></label>
+                        <input asp-for="Input.CustomerPhone" class="form-control" />
+                        <span asp-validation-for="Input.CustomerPhone" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <a class="btn btn-outline-secondary" href="/cart">Назад в корзину</a>
+                        <button type="submit" class="btn btn-primary">Подтвердить заказ</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <h2 class="h4 mb-3">Ваш заказ</h2>
+
+                <div class="list-group list-group-flush">
+                    @foreach (var item in Model.Items)
+                    {
+                        <div class="list-group-item px-0">
+                            <div class="d-flex justify-content-between gap-3">
+                                <div>
+                                    <div class="fw-semibold">@item.Name</div>
+                                    <div class="small text-muted">@item.Quantity x @item.Price.ToString("N2") ₽</div>
+                                </div>
+                                <div class="fw-semibold">@((item.Price * item.Quantity).ToString("N2")) ₽</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <hr />
+                <div class="d-flex justify-content-between mb-2">
+                    <span>Количество</span>
+                    <strong>@Model.TotalQuantity</strong>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <span>Итого</span>
+                    <strong>@Model.TotalAmount.ToString("N2") ₽</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
