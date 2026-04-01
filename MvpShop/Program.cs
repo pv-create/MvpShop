@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MvpShop.Data;
 using MvpShop.Features.Orders;
+using MvpShop.Infrastructure.Localization;
 using MvpShop.Infrastructure.Telegram;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,7 @@ builder.Services.Configure<TelegramSettings>(
 
 builder.Services.AddDataProtection();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<AppLocalizer>();
 builder.Services.AddScoped<MvpShop.Features.Cart.CartService>();
 builder.Services.AddScoped<OrderService>();
 builder.Services.AddScoped<ITelegramService, TelegramService>();

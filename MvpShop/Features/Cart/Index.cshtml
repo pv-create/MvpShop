@@ -1,18 +1,18 @@
 @model MvpShop.Features.Cart.CartViewModel
 @{
-    ViewData["Title"] = "Корзина";
+    ViewData["Title"] = L.T("CartTitle");
 }
 
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
     <div>
-        <h1 class="mb-1">Корзина</h1>
-        <p class="text-muted mb-0">Всего товаров: @Model.TotalQuantity</p>
+        <h1 class="mb-1">@L.T("CartTitle")</h1>
+        <p class="text-muted mb-0">@L.F("TotalItems", Model.TotalQuantity)</p>
     </div>
     <div class="d-flex gap-2">
-        <a class="btn btn-outline-secondary" href="/">Продолжить покупки</a>
+        <a class="btn btn-outline-secondary" href="/">@L.T("ContinueShopping")</a>
         @if (Model.Items.Count > 0)
         {
-            <a class="btn btn-primary" href="/orders/checkout">Оформить заказ</a>
+            <a class="btn btn-primary" href="/orders/checkout">@L.T("Checkout")</a>
         }
     </div>
 </div>
@@ -20,9 +20,9 @@
 @if (Model.Items.Count == 0)
 {
     <div class="empty-state text-center py-5 px-4">
-        <h2 class="h4 mb-2">Корзина пуста</h2>
-        <p class="text-muted mb-3">Добавьте товары из каталога, чтобы перейти к оформлению заказа.</p>
-        <a class="btn btn-primary" href="/">Открыть каталог</a>
+        <h2 class="h4 mb-2">@L.T("CartEmpty")</h2>
+        <p class="text-muted mb-3">@L.T("CartEmptyText")</p>
+        <a class="btn btn-primary" href="/">@L.T("OpenCatalog")</a>
     </div>
 }
 else
@@ -34,19 +34,20 @@ else
                     <table class="table align-middle mb-0">
                         <thead class="table-light">
                             <tr>
-                                <th>Товар</th>
-                                <th class="text-end">Цена</th>
-                                <th class="text-center">Количество</th>
-                                <th class="text-end">Сумма</th>
+                                <th>@L.T("Product")</th>
+                                <th class="text-end">@L.T("Price")</th>
+                                <th class="text-center">@L.T("Quantity")</th>
+                                <th class="text-end">@L.T("Amount")</th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var item in Model.Items)
                             {
+                                var localizedName = L.ProductName(item.Name);
                                 <tr>
                                     <td>
-                                        <div class="fw-semibold">@item.Name</div>
+                                        <div class="fw-semibold">@localizedName</div>
                                         <div class="small text-muted">ID: @item.ProductId</div>
                                     </td>
                                     <td class="text-end">@item.Price.ToString("N2") ₽</td>
@@ -55,7 +56,7 @@ else
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="productId" value="@item.ProductId" />
                                             <input type="number" name="quantity" value="@item.Quantity" min="0" class="form-control form-control-sm cart-quantity-input" />
-                                            <button type="submit" class="btn btn-sm btn-outline-secondary">Обновить</button>
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary">@L.T("Update")</button>
                                         </form>
                                     </td>
                                     <td class="text-end fw-semibold">@((item.Price * item.Quantity).ToString("N2")) ₽</td>
@@ -63,7 +64,7 @@ else
                                         <form method="post" action="/cart/remove-item">
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="productId" value="@item.ProductId" />
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">Удалить</button>
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">@L.T("Delete")</button>
                                         </form>
                                     </td>
                                 </tr>
@@ -77,21 +78,21 @@ else
         <div class="col-lg-4">
             <div class="card shadow-sm border-0">
                 <div class="card-body">
-                    <h2 class="h4 mb-3">Итого</h2>
+                    <h2 class="h4 mb-3">@L.T("Total")</h2>
                     <div class="d-flex justify-content-between mb-2">
-                        <span>Количество</span>
+                        <span>@L.T("Quantity")</span>
                         <strong>@Model.TotalQuantity</strong>
                     </div>
                     <div class="d-flex justify-content-between mb-4">
-                        <span>Сумма</span>
+                        <span>@L.T("Amount")</span>
                         <strong>@Model.TotalAmount.ToString("N2") ₽</strong>
                     </div>
 
                     <div class="d-grid gap-2">
-                        <a class="btn btn-primary" href="/orders/checkout">Оформить заказ</a>
+                        <a class="btn btn-primary" href="/orders/checkout">@L.T("Checkout")</a>
                         <form method="post" action="/cart/clear">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-outline-danger w-100">Очистить корзину</button>
+                            <button type="submit" class="btn btn-outline-danger w-100">@L.T("ClearCart")</button>
                         </form>
                     </div>
                 </div>

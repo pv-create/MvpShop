@@ -1,13 +1,13 @@
 @model MvpShop.Features.Products.ProductFormModel
 @{
-    ViewData["Title"] = "Создать товар";
+    ViewData["Title"] = L.T("CreateProduct");
 }
 
 <div class="row justify-content-center">
     <div class="col-lg-8">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="mb-0">Новый товар</h1>
-            <a class="btn btn-link" href="/">К каталогу</a>
+            <h1 class="mb-0">@L.T("ProductCreated")</h1>
+            <a class="btn btn-link" href="/">@L.T("ToCatalog")</a>
         </div>
 
         <form method="post" class="card shadow-sm border-0">
@@ -15,32 +15,32 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
                 <div class="mb-3">
-                    <label asp-for="Name" class="form-label"></label>
+                    <label asp-for="Name" class="form-label">@L.T("NameLabel")</label>
                     <input asp-for="Name" class="form-control" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="Description" class="form-label"></label>
+                    <label asp-for="Description" class="form-label">@L.T("DescriptionLabel")</label>
                     <textarea asp-for="Description" class="form-control" rows="5"></textarea>
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="Price" class="form-label"></label>
+                    <label asp-for="Price" class="form-label">@L.T("PriceLabel")</label>
                     <input asp-for="Price" class="form-control" />
                     <span asp-validation-for="Price" class="text-danger"></span>
                 </div>
 
                 <div class="mb-0">
-                    <label asp-for="ImageUrl" class="form-label"></label>
+                    <label asp-for="ImageUrl" class="form-label">@L.T("ImageUrlLabel")</label>
                     <input asp-for="ImageUrl" class="form-control" />
                     <span asp-validation-for="ImageUrl" class="text-danger"></span>
                 </div>
             </div>
             <div class="card-footer bg-white d-flex gap-2 justify-content-end">
-                <a class="btn btn-outline-secondary" href="/">Отмена</a>
-                <button type="submit" class="btn btn-primary">Сохранить</button>
+                <a class="btn btn-outline-secondary" href="/">@L.T("Cancel")</a>
+                <button type="submit" class="btn btn-primary">@L.T("Save")</button>
             </div>
         </form>
     </div>

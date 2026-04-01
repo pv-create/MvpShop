@@ -1,25 +1,25 @@
 @model IReadOnlyList<MvpShop.Data.Entities.Product>
 @{
-    ViewData["Title"] = "Админка";
+    ViewData["Title"] = L.T("Admin");
 }
 
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
     <div>
-        <h1 class="mb-1">Админка товаров</h1>
-        <p class="text-muted mb-0">Управление каталогом: создание, изменение и удаление товаров с монгольскими названиями и описаниями.</p>
+        <h1 class="mb-1">@L.T("ProductAdmin")</h1>
+        <p class="text-muted mb-0">@L.T("ProductAdminText")</p>
     </div>
     <div class="d-flex gap-2">
-        <a class="btn btn-outline-secondary" href="/">Открыть витрину</a>
-        <a class="btn btn-primary" href="/products/create">Добавить товар</a>
+        <a class="btn btn-outline-secondary" href="/">@L.T("OpenStorefront")</a>
+        <a class="btn btn-primary" href="/products/create">@L.T("AddProduct")</a>
     </div>
 </div>
 
 @if (Model.Count == 0)
 {
     <div class="empty-state text-center py-5 px-4">
-        <h2 class="h4 mb-2">Каталог пуст</h2>
-        <p class="text-muted mb-3">Создайте первый товар, чтобы он появился на витрине магазина.</p>
-        <a class="btn btn-primary" href="/products/create">Создать товар</a>
+        <h2 class="h4 mb-2">@L.T("CatalogEmpty")</h2>
+        <p class="text-muted mb-3">@L.T("CreateFirstCatalogProduct")</p>
+        <a class="btn btn-primary" href="/products/create">@L.T("CreateProduct")</a>
     </div>
 }
 else
@@ -29,27 +29,31 @@ else
             <table class="table align-middle mb-0 admin-table">
                 <thead>
                     <tr>
-                        <th>Товар</th>
-                        <th class="text-end">Цена</th>
-                        <th class="text-center">Создан</th>
-                        <th class="text-end">Действия</th>
+                        <th>@L.T("Product")</th>
+                        <th class="text-end">@L.T("Price")</th>
+                        <th class="text-center">@L.T("CreatedAt")</th>
+                        <th class="text-end">@L.T("Actions")</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var product in Model)
                     {
+                        var localizedName = L.ProductName(product.Name);
+                        var localizedDescription = string.IsNullOrWhiteSpace(product.Description)
+                            ? L.T("NoDescription")
+                            : L.ProductDescription(product.Name, product.Description);
                         <tr>
                             <td>
-                                <div class="fw-semibold">@product.Name</div>
-                                <div class="small text-muted">@(string.IsNullOrWhiteSpace(product.Description) ? "Описание не задано" : product.Description)</div>
+                                <div class="fw-semibold">@localizedName</div>
+                                <div class="small text-muted">@localizedDescription</div>
                             </td>
                             <td class="text-end">@product.Price.ToString("N2") ₽</td>
                             <td class="text-center">@product.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy HH:mm")</td>
                             <td class="text-end">
                                 <div class="d-inline-flex gap-2">
-                                    <a class="btn btn-sm btn-outline-primary" href="/products/@product.Id">Открыть</a>
-                                    <a class="btn btn-sm btn-outline-secondary" href="/products/@product.Id/edit">Изменить</a>
-                                    <a class="btn btn-sm btn-outline-danger" href="/products/@product.Id/delete">Удалить</a>
+                                    <a class="btn btn-sm btn-outline-primary" href="/products/@product.Id">@L.T("Open")</a>
+                                    <a class="btn btn-sm btn-outline-secondary" href="/products/@product.Id/edit">@L.T("Edit")</a>
+                                    <a class="btn btn-sm btn-outline-danger" href="/products/@product.Id/delete">@L.T("Delete")</a>
                                 </div>
                             </td>
                         </tr>

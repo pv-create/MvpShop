@@ -89,6 +89,51 @@ a {
   margin-left: 0.5rem;
 }
 
+.language-switcher {
+  display: flex;
+  align-items: center;
+}
+
+.language-switcher__button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  border: 1px solid rgba(255, 248, 234, 0.25);
+  border-radius: 999px;
+  background: rgba(255, 248, 234, 0.08);
+  color: #fff8ea;
+  padding: 0.45rem 0.75rem;
+}
+
+.language-switcher__label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.language-switcher__track {
+  position: relative;
+  width: 2.8rem;
+  height: 1.45rem;
+  border-radius: 999px;
+  background: rgba(255, 248, 234, 0.25);
+}
+
+.language-switcher__thumb {
+  position: absolute;
+  top: 0.15rem;
+  left: 0.16rem;
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 999px;
+  background: var(--mongol-gold);
+  transition: transform 0.18s ease;
+}
+
+.language-switcher__track.is-russian .language-switcher__thumb {
+  transform: translateX(1.3rem);
+}
+
 .site-nav .nav-link::after {
   content: "";
   position: absolute;

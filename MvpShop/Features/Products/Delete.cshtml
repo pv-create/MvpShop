@@ -1,27 +1,31 @@
 @model MvpShop.Data.Entities.Product
 @{
-    ViewData["Title"] = "Удалить товар";
+    ViewData["Title"] = L.T("DeleteProduct");
+    var localizedName = L.ProductName(Model.Name);
+    var localizedDescription = string.IsNullOrWhiteSpace(Model.Description)
+        ? L.T("NotSpecified")
+        : L.ProductDescription(Model.Name, Model.Description);
 }
 
 <div class="row justify-content-center">
     <div class="col-lg-7">
         <div class="card border-danger shadow-sm">
             <div class="card-body p-4">
-                <h1 class="h3 mb-3">Удалить товар</h1>
-                <p class="mb-4">Вы собираетесь удалить <strong>@Model.Name</strong>. Это действие нельзя отменить.</p>
+                <h1 class="h3 mb-3">@L.T("DeleteProduct")</h1>
+                <p class="mb-4">@L.F("DeleteWarning", localizedName)</p>
 
                 <dl class="row mb-0">
-                    <dt class="col-sm-4">Цена</dt>
+                    <dt class="col-sm-4">@L.T("Price")</dt>
                     <dd class="col-sm-8">@Model.Price.ToString("N2") ₽</dd>
 
-                    <dt class="col-sm-4">Описание</dt>
-                    <dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Model.Description) ? "Не указано" : Model.Description)</dd>
+                    <dt class="col-sm-4">@L.T("Description")</dt>
+                    <dd class="col-sm-8">@localizedDescription</dd>
                 </dl>
             </div>
             <div class="card-footer bg-white d-flex gap-2 justify-content-end">
-                <a class="btn btn-outline-secondary" href="/products/@Model.Id">Отмена</a>
+                <a class="btn btn-outline-secondary" href="/products/@Model.Id">@L.T("Cancel")</a>
                 <form method="post">
-                    <button type="submit" class="btn btn-danger">Удалить</button>
+                    <button type="submit" class="btn btn-danger">@L.T("Delete")</button>
                 </form>
             </div>
         </div>

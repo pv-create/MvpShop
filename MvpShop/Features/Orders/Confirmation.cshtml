@@ -1,14 +1,14 @@
 @model MvpShop.Features.Orders.ConfirmationViewModel
 @{
-    ViewData["Title"] = "Заказ оформлен";
+    ViewData["Title"] = L.T("OrderCreatedTitle");
 }
 
 <div class="empty-state text-center py-5 px-4">
-    <h1 class="mb-3">Спасибо за заказ, @Model.CustomerName!</h1>
-    <p class="lead mb-2">Ваш заказ успешно создан.</p>
-    <p class="text-muted mb-4">Номер заказа: <strong>#@Model.OrderId</strong></p>
+    <h1 class="mb-3">@L.F("ThanksForOrder", Model.CustomerName)</h1>
+    <p class="lead mb-2">@L.T("OrderCreatedText")</p>
+    <p class="text-muted mb-4">@L.F("OrderNumber", Model.OrderId)</p>
     <div class="d-flex justify-content-center gap-2">
-        <a class="btn btn-primary" href="/">Вернуться в каталог</a>
-        <a class="btn btn-outline-secondary" href="/cart">Открыть корзину</a>
+        <a class="btn btn-primary" href="/">@L.T("ReturnToCatalog")</a>
+        <a class="btn btn-outline-secondary" href="/cart">@L.T("OpenCart")</a>
     </div>
 </div>
