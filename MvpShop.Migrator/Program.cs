@@ -11,6 +11,8 @@ var configuration = new ConfigurationBuilder()
 var connectionString = configuration["ConnectionStrings:DefaultConnection"]
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' was not found.");
 
+await PostgresDatabaseBootstrapper.EnsureDatabaseExistsAsync(connectionString);
+
 var seedSettings = configuration
     .GetSection(SeedSettings.SectionName)
     .Get<SeedSettings>() ?? new SeedSettings();

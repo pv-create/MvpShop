@@ -43,7 +43,7 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
       ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=mvp_shop;Username=postgres;Password=postgres
-      Seed__ApplyMigrationsOnStartup: "false"
+      Seed__ApplyMigrationsOnStartup: "true"
       Seed__ForceReseedProducts: "false"
       Telegram__BotToken: ${TELEGRAM_BOT_TOKEN:-}
       Telegram__ChatId: ${TELEGRAM_CHAT_ID:-}
