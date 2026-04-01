@@ -41,13 +41,11 @@ else
     <div class="row g-4">
         @foreach (var product in Model)
         {
-            var imageUrl = string.IsNullOrWhiteSpace(product.ImageUrl)
-                ? "https://placehold.co/900x600/f4f4f0/222?text=MvpShop"
-                : product.ImageUrl;
             var localizedName = L.ProductName(product.Name);
             var localizedDescription = string.IsNullOrWhiteSpace(product.Description)
                 ? L.T("NoDescription")
                 : L.ProductDescription(product.Name, product.Description);
+            var imageUrl = L.ProductImageUrl(product.ImageUrl, product.Name, "https://placehold.co/900x600/f4f4f0/222?text=MvpShop");
 
             <div class="col-md-6 col-xl-4">
                 <div class="card h-100 shadow-sm border-0 product-card">

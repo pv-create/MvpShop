@@ -1,9 +1,12 @@
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 
 namespace MvpShop.Infrastructure.Localization;
 
 public class AppLocalizer(IHttpContextAccessor httpContextAccessor)
 {
+    private static readonly Regex PlaceholderTextRegex = new(@"([?&]text=)[^&]*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
     public const string CookieName = "site-lang";
     public const string Mongolian = "mn";
     public const string Russian = "ru";
@@ -314,5 +317,26 @@ public class AppLocalizer(IHttpContextAccessor httpContextAccessor)
             "Дарс" => "Категория: напитки алкогольные. Топ-товар: вино Фанагория Резерв Шардоне. Объем: 750 мл. Ранг по покупкам: 46.",
             _ => value
         };
+    }
+
+    public string ProductImageUrl(string? imageUrl, string productName, string fallbackUrl)
+    {
+        var effectiveUrl = string.IsNullOrWhiteSpace(imageUrl) ? fallbackUrl : imageUrl;
+
+        if (!effectiveUrl.Contains("placehold.co", StringComparison.OrdinalIgnoreCase))
+        {
+            return effectiveUrl;
+        }
+
+        var localizedName = ProductName(productName);
+        var encodedName = Uri.EscapeDataString(localizedName);
+
+        if (PlaceholderTextRegex.IsMatch(effectiveUrl))
+        {
+            return PlaceholderTextRegex.Replace(effectiveUrl, $"$1{encodedName}", 1);
+        }
+
+        var separator = effectiveUrl.Contains('?') ? "&" : "?";
+        return $"{effectiveUrl}{separator}text={encodedName}";
     }
 }

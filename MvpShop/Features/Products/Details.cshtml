@@ -5,9 +5,7 @@
         ? L.T("NoDetailedDescription")
         : L.ProductDescription(Model.Name, Model.Description);
     ViewData["Title"] = localizedName;
-    var imageUrl = string.IsNullOrWhiteSpace(Model.ImageUrl)
-        ? "https://placehold.co/1200x800/f4f4f0/222?text=MvpShop"
-        : Model.ImageUrl;
+    var imageUrl = L.ProductImageUrl(Model.ImageUrl, Model.Name, "https://placehold.co/1200x800/f4f4f0/222?text=MvpShop");
 }
 
 <div class="row g-4 align-items-start">
