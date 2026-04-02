@@ -36,10 +36,21 @@ public class CartController(AppDbContext dbContext, CartService cartService) : C
             Quantity = 1
         });
 
-        return Json(new
+        if (string.Equals(Request.Headers.XRequestedWith, "XMLHttpRequest", StringComparison.OrdinalIgnoreCase))
         {
-            totalQuantity = cartService.GetTotalQuantity()
-        });
+            return Json(new
+            {
+                totalQuantity = cartService.GetTotalQuantity()
+            });
+        }
+
+        var referer = Request.Headers.Referer.ToString();
+        if (Uri.TryCreate(referer, UriKind.Absolute, out var refererUri))
+        {
+            return Redirect(refererUri.PathAndQuery);
+        }
+
+        return RedirectToAction(nameof(Index));
     }
 
     [HttpPost("cart/update-quantity")]
