@@ -7,12 +7,10 @@ services:
       POSTGRES_DB: mvp_shop
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d mvp_shop"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -40,7 +38,6 @@ services:
       migrator:
         condition: service_completed_successfully
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8080
       ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=mvp_shop;Username=postgres;Password=postgres
       Seed__ApplyMigrationsOnStartup: "true"
