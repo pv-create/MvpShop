@@ -18,9 +18,12 @@ builder.Services.AddScoped<AppLocalizer>();
 builder.Services.AddScoped<MvpShop.Features.Cart.CartService>();
 builder.Services.AddScoped<OrderService>();
 builder.Services.AddScoped<ITelegramService, TelegramService>();
+builder.Services.AddSingleton<DatabaseRecoveryService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        npgsqlOptions => npgsqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null)));
 
 builder.Services
     .AddControllersWithViews()
@@ -34,7 +37,7 @@ builder.Services
 
 var app = builder.Build();
 
-await AppDbInitializer.InitializeAsync(app.Services);
+await app.Services.GetRequiredService<DatabaseRecoveryService>().EnsureInitializedAsync();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -47,6 +50,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseMiddleware<DatabaseRecoveryMiddleware>();
 
 app.UseAuthorization();
 
