@@ -56,8 +56,13 @@ else
                             <span class="product-badge">@product.Price.ToString("N2") ₽</span>
                         </div>
                         <p class="card-text text-muted flex-grow-1">@localizedDescription</p>
-                        <div class="d-flex gap-2">
+                        <div class="d-flex gap-2 flex-wrap">
                             <a class="btn btn-primary" href="/products/@product.Id">@L.T("Open")</a>
+                            <form method="post" action="/cart/add-item" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="productId" value="@product.Id" />
+                                <button type="submit" class="btn btn-outline-primary">@L.T("AddToCart")</button>
+                            </form>
                         </div>
                     </div>
                 </div>
