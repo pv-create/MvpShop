@@ -3,6 +3,7 @@ using MvpShop.Data;
 using MvpShop.Data.Entities;
 using MvpShop.Features.Cart;
 using MvpShop.Infrastructure.Telegram;
+using Prometheus;
 
 namespace MvpShop.Features.Orders;
 
@@ -11,6 +12,9 @@ public class OrderService(
     ITelegramService telegramService,
     ILogger<OrderService> logger)
 {
+    private static readonly Counter OrdersCreatedCounter = Metrics
+        .CreateCounter("mvpshop_orders_created_total", "Total number of created orders.");
+
     public async Task<Order> CreateOrderAsync(
         CheckoutInputModel input,
         IReadOnlyList<CartItem> cartItems,
@@ -54,6 +58,8 @@ public class OrderService(
         {
             throw new InvalidOperationException("Order creation failed.");
         }
+
+        OrdersCreatedCounter.Inc();
 
         try
         {

@@ -3,6 +3,7 @@ using MvpShop.Data;
 using MvpShop.Features.Orders;
 using MvpShop.Infrastructure.Localization;
 using MvpShop.Infrastructure.Telegram;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,11 +51,13 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseHttpMetrics();
 app.UseMiddleware<DatabaseRecoveryMiddleware>();
 
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapMetrics();
 
 app.MapControllerRoute(
     name: "default",
