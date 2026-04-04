@@ -22,7 +22,7 @@
   "links": [],
   "panels": [
     {
-      "datasource": "Prometheus",
+      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -35,18 +35,10 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "orange",
-                "value": 5
-              },
-              {
-                "color": "red",
-                "value": 20
               }
             ]
           },
-          "unit": "reqps"
+          "unit": "short"
         },
         "overrides": []
       },
@@ -59,67 +51,6 @@
       "id": 1,
       "options": {
         "colorMode": "background",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "12.1.1",
-      "targets": [
-        {
-          "datasource": "Prometheus",
-          "expr": "sum(rate(http_requests_received_total[5m]))",
-          "refId": "A"
-        }
-      ],
-      "title": "Requests / sec",
-      "type": "stat"
-    },
-    {
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 0.05
-              },
-              {
-                "color": "red",
-                "value": 0.2
-              }
-            ]
-          },
-          "unit": "percentunit"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 6,
-        "y": 0
-      },
-      "id": 2,
-      "options": {
-        "colorMode": "background",
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
@@ -132,177 +63,8 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "12.1.1",
       "targets": [
         {
-          "datasource": "Prometheus",
-          "expr": "sum(rate(http_requests_received_total{code=~\"5..\"}[5m])) / clamp_min(sum(rate(http_requests_received_total[5m])), 0.0001)",
-          "refId": "A"
-        }
-      ],
-      "title": "5xx error ratio",
-      "type": "stat"
-    },
-    {
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "orange",
-                "value": 0.5
-              },
-              {
-                "color": "red",
-                "value": 1
-              }
-            ]
-          },
-          "unit": "s"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 12,
-        "y": 0
-      },
-      "id": 3,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "12.1.1",
-      "targets": [
-        {
-          "datasource": "Prometheus",
-          "expr": "histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket[5m])))",
-          "refId": "A"
-        }
-      ],
-      "title": "P95 latency",
-      "type": "stat"
-    },
-    {
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 18,
-        "y": 0
-      },
-      "id": 4,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "12.1.1",
-      "targets": [
-        {
-          "datasource": "Prometheus",
-          "expr": "sum(http_requests_in_progress)",
-          "refId": "A"
-        }
-      ],
-      "title": "Requests in progress",
-      "type": "stat"
-    },
-    {
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 0,
-        "y": 25
-      },
-      "id": 9,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "auto"
-      },
-      "pluginVersion": "12.1.1",
-      "targets": [
-        {
-          "datasource": "Prometheus",
           "expr": "mvpshop_orders_created_total",
           "refId": "A"
         }
@@ -311,7 +73,7 @@
       "type": "stat"
     },
     {
-      "datasource": "Prometheus",
+      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -343,9 +105,9 @@
         "h": 8,
         "w": 6,
         "x": 6,
-        "y": 25
+        "y": 0
       },
-      "id": 10,
+      "id": 2,
       "options": {
         "colorMode": "background",
         "graphMode": "area",
@@ -360,10 +122,8 @@
         },
         "textMode": "auto"
       },
-      "pluginVersion": "12.1.1",
       "targets": [
         {
-          "datasource": "Prometheus",
           "expr": "sum(increase(mvpshop_orders_created_total[1m]))",
           "refId": "A"
         }
@@ -372,7 +132,125 @@
       "type": "stat"
     },
     {
-      "datasource": "Prometheus",
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 5
+              },
+              {
+                "color": "red",
+                "value": 20
+              }
+            ]
+          },
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 12,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(http_requests_received_total[5m]))",
+          "refId": "A"
+        }
+      ],
+      "title": "Requests / sec",
+      "type": "stat"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 0.5
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket[5m])))",
+          "refId": "A"
+        }
+      ],
+      "title": "P95 latency",
+      "type": "stat"
+    },
+    {
+      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -384,17 +262,9 @@
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
-            "barAlignment": 0,
             "drawStyle": "line",
             "fillOpacity": 20,
             "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
             "lineWidth": 2,
             "pointSize": 4,
             "scaleDistribution": {
@@ -444,20 +314,18 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.1.1",
       "targets": [
         {
-          "datasource": "Prometheus",
-          "expr": "sum by (method) (rate(http_requests_received_total[5m]))",
-          "legendFormat": "{{method}}",
+          "expr": "sum by (code) (rate(http_requests_received_total[5m]))",
+          "legendFormat": "{{code}}",
           "refId": "A"
         }
       ],
-      "title": "Request rate by method",
+      "title": "Requests by status code",
       "type": "timeseries"
     },
     {
-      "datasource": "Prometheus",
+      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -469,17 +337,9 @@
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
-            "barAlignment": 0,
             "drawStyle": "line",
             "fillOpacity": 20,
             "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
             "lineWidth": 2,
             "pointSize": 4,
             "scaleDistribution": {
@@ -505,7 +365,7 @@
               }
             ]
           },
-          "unit": "s"
+          "unit": "reqps"
         },
         "overrides": []
       },
@@ -529,177 +389,15 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.1.1",
       "targets": [
         {
-          "datasource": "Prometheus",
-          "expr": "histogram_quantile(0.95, sum by (le, action) (rate(http_request_duration_seconds_bucket[5m])))",
-          "legendFormat": "{{action}}",
+          "expr": "sum by (method) (rate(http_requests_received_total[5m]))",
+          "legendFormat": "{{method}}",
           "refId": "A"
         }
       ],
-      "title": "P95 latency by action",
+      "title": "Request rate by method",
       "type": "timeseries"
-    },
-    {
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "bars",
-            "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "reqps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 0,
-        "y": 17
-      },
-      "id": 7,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.1.1",
-      "targets": [
-        {
-          "datasource": "Prometheus",
-          "expr": "sum by (code) (rate(http_requests_received_total[5m]))",
-          "legendFormat": "{{code}}",
-          "refId": "A"
-        }
-      ],
-      "title": "Requests by status code",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "Prometheus",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "filterable": true,
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "reqps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 12,
-        "y": 17
-      },
-      "id": 8,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "Value"
-          }
-        ]
-      },
-      "pluginVersion": "12.1.1",
-      "targets": [
-        {
-          "datasource": "Prometheus",
-          "expr": "topk(10, sum by (controller, action) (rate(http_requests_received_total[5m])))",
-          "format": "table",
-          "instant": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Top endpoints by throughput",
-      "transformations": [
-        {
-          "id": "labelsToFields",
-          "options": {
-            "mode": "columns"
-          }
-        }
-      ],
-      "type": "table"
     }
   ],
   "refresh": "10s",
@@ -721,6 +419,6 @@
   "timezone": "",
   "title": "MvpShop Overview",
   "uid": "mvpshop-overview",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }
