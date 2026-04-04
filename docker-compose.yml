@@ -74,7 +74,6 @@ services:
       GF_PLUGINS_DISABLE_PLUGINS: grafana-lokiexplore-app,grafana-pyroscope-app,grafana-metricsdrilldown-app
     volumes:
       - grafana_data:/var/lib/grafana
-      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
     ports:
       - "3000:3000"
 
