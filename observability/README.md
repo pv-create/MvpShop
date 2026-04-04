@@ -5,7 +5,6 @@ The stack includes:
 - Prometheus at `http://localhost:9090`
 - Grafana at `http://localhost:3000`
 - ASP.NET metrics at `http://localhost:8080/metrics`
-- pre-provisioned dashboard: `MvpShop / MvpShop Overview`
 
 ## Start
 
