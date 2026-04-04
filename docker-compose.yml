@@ -40,6 +40,7 @@ services:
     environment:
       ASPNETCORE_URLS: http://+:8080
       ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=mvp_shop;Username=postgres;Password=postgres
+      OpenTelemetry__Otlp__Endpoint: http://tempo:4317
       Seed__ApplyMigrationsOnStartup: "true"
       Seed__ForceReseedProducts: "false"
       Telegram__BotToken: ${TELEGRAM_BOT_TOKEN:-}
@@ -69,6 +70,8 @@ services:
         condition: service_started
       loki:
         condition: service_started
+      tempo:
+        condition: service_started
     environment:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
@@ -90,6 +93,17 @@ services:
     ports:
       - "3100:3100"
 
+  tempo:
+    image: grafana/tempo:2.8.2
+    container_name: mvp-shop-tempo
+    restart: unless-stopped
+    command: [ "-config.file=/etc/tempo/tempo.yml" ]
+    volumes:
+      - ./observability/tempo/tempo.yml:/etc/tempo/tempo.yml:ro
+      - tempo_data:/var/tempo
+    ports:
+      - "3200:3200"
+
   promtail:
     image: grafana/promtail:3.1.1
     container_name: mvp-shop-promtail
@@ -109,3 +123,4 @@ volumes:
   grafana_data:
   loki_data:
   promtail_data:
+  tempo_data:

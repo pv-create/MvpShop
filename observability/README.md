@@ -5,6 +5,7 @@ The stack includes:
 - Prometheus at `http://localhost:9090`
 - Grafana at `http://localhost:3000`
 - Loki at `http://localhost:3100`
+- Tempo at `http://localhost:3200`
 - ASP.NET metrics at `http://localhost:8080/metrics`
 
 ## Start
@@ -44,4 +45,19 @@ Then you can query logs, for example:
 
 ```text
 {container="mvp-shop-web"}
+```
+
+## Traces in Grafana
+
+Tracing is exported from the ASP.NET app to Tempo over OTLP gRPC.
+
+Add a Tempo data source manually in Grafana:
+
+- Type: `Tempo`
+- URL: `http://tempo:3200`
+
+Then open `Explore` and search traces by service name:
+
+```text
+service.name = "MvpShop"
 ```

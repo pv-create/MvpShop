@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MvpShop.Data;
 using MvpShop.Data.Entities;
 using MvpShop.Features.Cart;
+using MvpShop.Infrastructure.Observability;
 using MvpShop.Infrastructure.Telegram;
 using Prometheus;
 
@@ -25,11 +26,16 @@ public class OrderService(
             throw new InvalidOperationException("Cannot create order from an empty cart.");
         }
 
+        using var activity = MvpShopTelemetry.ActivitySource.StartActivity("orders.create");
+        activity?.SetTag("order.items_count", cartItems.Count);
+        activity?.SetTag("order.total_amount", cartItems.Sum(x => x.Price * x.Quantity));
+
         var executionStrategy = dbContext.Database.CreateExecutionStrategy();
         Order? order = null;
 
         await executionStrategy.ExecuteAsync(async () =>
         {
+            using var persistenceActivity = MvpShopTelemetry.ActivitySource.StartActivity("orders.persist");
             await using var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken);
 
             order = new Order
@@ -59,6 +65,7 @@ public class OrderService(
             throw new InvalidOperationException("Order creation failed.");
         }
 
+        activity?.SetTag("order.id", order.Id);
         OrdersCreatedCounter.Inc();
 
         try
@@ -68,6 +75,7 @@ public class OrderService(
         catch (Exception exception)
         {
             logger.LogWarning(exception, "Telegram notification failed for order {OrderId}.", order.Id);
+            activity?.SetStatus(System.Diagnostics.ActivityStatusCode.Error, exception.Message);
         }
 
         return order;

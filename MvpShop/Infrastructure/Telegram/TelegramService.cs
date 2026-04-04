@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Net;
 using Microsoft.Extensions.Options;
 using MvpShop.Data.Entities;
+using MvpShop.Infrastructure.Observability;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 
@@ -14,6 +15,10 @@ public class TelegramService(
     public async Task SendOrderNotificationAsync(Order order, List<OrderItem> items, CancellationToken cancellationToken = default)
     {
         var options = settings.Value;
+        using var activity = MvpShopTelemetry.ActivitySource.StartActivity("telegram.send_order_notification");
+        activity?.SetTag("messaging.system", "telegram");
+        activity?.SetTag("order.id", order.Id);
+        activity?.SetTag("telegram.chat_id", options.ChatId);
 
         if (string.IsNullOrWhiteSpace(options.BotToken) || string.IsNullOrWhiteSpace(options.ChatId))
         {

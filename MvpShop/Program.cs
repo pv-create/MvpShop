@@ -2,7 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using MvpShop.Data;
 using MvpShop.Features.Orders;
 using MvpShop.Infrastructure.Localization;
+using MvpShop.Infrastructure.Observability;
 using MvpShop.Infrastructure.Telegram;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +28,21 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         npgsqlOptions => npgsqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null)));
+
+var otlpEndpoint = builder.Configuration["OpenTelemetry:Otlp:Endpoint"];
+if (!string.IsNullOrWhiteSpace(otlpEndpoint))
+{
+    builder.Services.AddOpenTelemetry()
+        .ConfigureResource(resource => resource.AddService(MvpShopTelemetry.ServiceName))
+        .WithTracing(tracing => tracing
+            .AddSource(MvpShopTelemetry.ActivitySourceName)
+            .AddAspNetCoreInstrumentation(options => options.RecordException = true)
+            .AddHttpClientInstrumentation(options => options.RecordException = true)
+            .AddOtlpExporter(options =>
+            {
+                options.Endpoint = new Uri(otlpEndpoint);
+            }));
+}
 
 builder.Services
     .AddControllersWithViews()
