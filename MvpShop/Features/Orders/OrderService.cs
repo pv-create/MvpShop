@@ -23,12 +23,18 @@ public class OrderService(
     {
         if (cartItems.Count == 0)
         {
+            logger.LogWarning("Order creation attempted with an empty cart.");
             throw new InvalidOperationException("Cannot create order from an empty cart.");
         }
 
         using var activity = MvpShopTelemetry.ActivitySource.StartActivity("orders.create");
         activity?.SetTag("order.items_count", cartItems.Count);
         activity?.SetTag("order.total_amount", cartItems.Sum(x => x.Price * x.Quantity));
+        logger.LogInformation(
+            "Order creation started for customer {CustomerEmail} with {ItemsCount} positions and total {TotalAmount}.",
+            input.CustomerEmail.Trim(),
+            cartItems.Count,
+            cartItems.Sum(x => x.Price * x.Quantity));
 
         var executionStrategy = dbContext.Database.CreateExecutionStrategy();
         Order? order = null;
@@ -58,6 +64,11 @@ public class OrderService(
             dbContext.Orders.Add(order);
             await dbContext.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
+            logger.LogInformation(
+                "Order {OrderId} persisted with {ItemsCount} items and status {OrderStatus}.",
+                order.Id,
+                order.Items.Count,
+                order.Status);
         });
 
         if (order is null)
@@ -67,6 +78,7 @@ public class OrderService(
 
         activity?.SetTag("order.id", order.Id);
         OrdersCreatedCounter.Inc();
+        logger.LogInformation("Order {OrderId} created successfully.", order.Id);
 
         try
         {
@@ -83,8 +95,17 @@ public class OrderService(
 
     public async Task<Order?> GetOrderAsync(int id, CancellationToken cancellationToken)
     {
-        return await dbContext.Orders
+        var order = await dbContext.Orders
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+        if (order is null)
+        {
+            logger.LogWarning("Order {OrderId} was not found.", id);
+            return null;
+        }
+
+        logger.LogInformation("Order {OrderId} was loaded.", id);
+        return order;
     }
 }

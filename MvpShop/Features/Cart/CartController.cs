@@ -4,14 +4,23 @@ using MvpShop.Data;
 
 namespace MvpShop.Features.Cart;
 
-public class CartController(AppDbContext dbContext, CartService cartService) : Controller
+public class CartController(
+    AppDbContext dbContext,
+    CartService cartService,
+    ILogger<CartController> logger) : Controller
 {
     [HttpGet("cart")]
     public IActionResult Index()
     {
+        var items = cartService.GetCartItems();
+        logger.LogDebug(
+            "Cart page opened with {UniqueItemsCount} positions and total quantity {TotalQuantity}.",
+            items.Count,
+            items.Sum(x => x.Quantity));
+
         return View(new CartViewModel
         {
-            Items = cartService.GetCartItems()
+            Items = items
         });
     }
 
@@ -25,6 +34,7 @@ public class CartController(AppDbContext dbContext, CartService cartService) : C
 
         if (product is null)
         {
+            logger.LogWarning("Add to cart failed because product {ProductId} was not found.", productId);
             return NotFound();
         }
 
@@ -35,6 +45,7 @@ public class CartController(AppDbContext dbContext, CartService cartService) : C
             Price = product.Price,
             Quantity = 1
         });
+        logger.LogDebug("Product {ProductId} added to cart from request.", product.Id);
 
         if (string.Equals(Request.Headers.XRequestedWith, "XMLHttpRequest", StringComparison.OrdinalIgnoreCase))
         {
@@ -58,6 +69,7 @@ public class CartController(AppDbContext dbContext, CartService cartService) : C
     public IActionResult UpdateQuantity(int productId, int quantity)
     {
         cartService.UpdateQuantity(productId, quantity);
+        logger.LogDebug("Cart quantity update requested for product {ProductId}: {Quantity}.", productId, quantity);
         return RedirectToAction(nameof(Index));
     }
 
@@ -66,6 +78,7 @@ public class CartController(AppDbContext dbContext, CartService cartService) : C
     public IActionResult RemoveItem(int productId)
     {
         cartService.RemoveFromCart(productId);
+        logger.LogDebug("Cart item removal requested for product {ProductId}.", productId);
         return RedirectToAction(nameof(Index));
     }
 
@@ -74,6 +87,7 @@ public class CartController(AppDbContext dbContext, CartService cartService) : C
     public IActionResult Clear()
     {
         cartService.ClearCart();
+        logger.LogDebug("Cart clear requested.");
         return RedirectToAction(nameof(Index));
     }
 }

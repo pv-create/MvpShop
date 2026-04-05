@@ -3,7 +3,10 @@ using MvpShop.Features.Cart;
 
 namespace MvpShop.Features.Orders;
 
-public class OrdersController(CartService cartService, OrderService orderService) : Controller
+public class OrdersController(
+    CartService cartService,
+    OrderService orderService,
+    ILogger<OrdersController> logger) : Controller
 {
     [HttpGet("orders/checkout")]
     public IActionResult Checkout()
@@ -12,9 +15,11 @@ public class OrdersController(CartService cartService, OrderService orderService
 
         if (items.Count == 0)
         {
+            logger.LogDebug("Checkout page requested with empty cart, redirecting to cart.");
             return RedirectToAction("Index", "Cart");
         }
 
+        logger.LogDebug("Checkout page opened with {ItemsCount} positions.", items.Count);
         return View(new CheckoutViewModel
         {
             Items = items
@@ -29,11 +34,13 @@ public class OrdersController(CartService cartService, OrderService orderService
 
         if (items.Count == 0)
         {
+            logger.LogWarning("Checkout submission rejected because cart is empty.");
             return RedirectToAction("Index", "Cart");
         }
 
         if (!ModelState.IsValid)
         {
+            logger.LogDebug("Checkout form validation failed.");
             return View(new CheckoutViewModel
             {
                 Input = input,
@@ -43,6 +50,7 @@ public class OrdersController(CartService cartService, OrderService orderService
 
         var order = await orderService.CreateOrderAsync(input, items, cancellationToken);
         cartService.ClearCart();
+        logger.LogInformation("Checkout completed, redirecting to confirmation for order {OrderId}.", order.Id);
 
         return RedirectToAction(nameof(Confirmation), new { orderId = order.Id });
     }
@@ -54,9 +62,11 @@ public class OrdersController(CartService cartService, OrderService orderService
 
         if (order is null)
         {
+            logger.LogWarning("Confirmation page requested for missing order {OrderId}.", orderId);
             return NotFound();
         }
 
+        logger.LogDebug("Confirmation page opened for order {OrderId}.", orderId);
         return View(new ConfirmationViewModel
         {
             OrderId = order.Id,

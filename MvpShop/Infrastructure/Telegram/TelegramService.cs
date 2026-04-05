@@ -35,7 +35,10 @@ public class TelegramService(
             parseMode: ParseMode.Html,
             cancellationToken: cancellationToken);
 
-        logger.LogInformation("Telegram notification sent for order {OrderId}.", order.Id);
+        logger.LogInformation(
+            "Telegram notification sent for order {OrderId} to chat {ChatId}.",
+            order.Id,
+            options.ChatId);
     }
 
     private static string BuildMessage(Order order, List<OrderItem> items)

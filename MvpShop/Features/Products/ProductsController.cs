@@ -5,7 +5,9 @@ using MvpShop.Data.Entities;
 
 namespace MvpShop.Features.Products;
 
-public class ProductsController(AppDbContext dbContext) : Controller
+public class ProductsController(
+    AppDbContext dbContext,
+    ILogger<ProductsController> logger) : Controller
 {
     [HttpGet("")]
     public async Task<IActionResult> List(CancellationToken cancellationToken)
@@ -13,6 +15,7 @@ public class ProductsController(AppDbContext dbContext) : Controller
         var products = await dbContext.Products
             .OrderByDescending(x => x.CreatedAt)
             .ToListAsync(cancellationToken);
+        logger.LogDebug("Catalog page opened, {ProductsCount} products loaded.", products.Count);
 
         return View(products);
     }
@@ -25,15 +28,18 @@ public class ProductsController(AppDbContext dbContext) : Controller
 
         if (product is null)
         {
+            logger.LogWarning("Product details requested for missing product {ProductId}.", id);
             return NotFound();
         }
 
+        logger.LogDebug("Product details opened for product {ProductId}.", id);
         return View(product);
     }
 
     [HttpGet("products/create")]
     public IActionResult Create()
     {
+        logger.LogDebug("Product create page opened.");
         return View(new ProductFormModel());
     }
 
@@ -43,6 +49,7 @@ public class ProductsController(AppDbContext dbContext) : Controller
     {
         if (!ModelState.IsValid)
         {
+            logger.LogDebug("Product create validation failed.");
             return View(model);
         }
 
@@ -56,6 +63,7 @@ public class ProductsController(AppDbContext dbContext) : Controller
 
         dbContext.Products.Add(product);
         await dbContext.SaveChangesAsync(cancellationToken);
+        logger.LogInformation("Product {ProductId} created.", product.Id);
 
         return RedirectToAction(nameof(Details), new { id = product.Id });
     }
@@ -68,9 +76,11 @@ public class ProductsController(AppDbContext dbContext) : Controller
 
         if (product is null)
         {
+            logger.LogWarning("Product edit requested for missing product {ProductId}.", id);
             return NotFound();
         }
 
+        logger.LogDebug("Product edit page opened for product {ProductId}.", id);
         return View(new ProductFormModel
         {
             Name = product.Name,
@@ -86,6 +96,7 @@ public class ProductsController(AppDbContext dbContext) : Controller
     {
         if (!ModelState.IsValid)
         {
+            logger.LogDebug("Product edit validation failed for product {ProductId}.", id);
             return View(model);
         }
 
@@ -94,6 +105,7 @@ public class ProductsController(AppDbContext dbContext) : Controller
 
         if (product is null)
         {
+            logger.LogWarning("Product edit submission failed because product {ProductId} was not found.", id);
             return NotFound();
         }
 
@@ -103,6 +115,7 @@ public class ProductsController(AppDbContext dbContext) : Controller
         product.ImageUrl = string.IsNullOrWhiteSpace(model.ImageUrl) ? null : model.ImageUrl.Trim();
 
         await dbContext.SaveChangesAsync(cancellationToken);
+        logger.LogInformation("Product {ProductId} updated.", product.Id);
 
         return RedirectToAction(nameof(Details), new { id = product.Id });
     }
@@ -115,9 +128,11 @@ public class ProductsController(AppDbContext dbContext) : Controller
 
         if (product is null)
         {
+            logger.LogWarning("Product delete page requested for missing product {ProductId}.", id);
             return NotFound();
         }
 
+        logger.LogDebug("Product delete page opened for product {ProductId}.", id);
         return View(product);
     }
 
@@ -130,11 +145,13 @@ public class ProductsController(AppDbContext dbContext) : Controller
 
         if (product is null)
         {
+            logger.LogWarning("Product delete submission failed because product {ProductId} was not found.", id);
             return NotFound();
         }
 
         dbContext.Products.Remove(product);
         await dbContext.SaveChangesAsync(cancellationToken);
+        logger.LogInformation("Product {ProductId} deleted.", id);
 
         return RedirectToAction(nameof(List));
     }

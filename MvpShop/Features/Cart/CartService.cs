@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.DataProtection;
 
 namespace MvpShop.Features.Cart;
 
-public class CartService(IHttpContextAccessor httpContextAccessor, IDataProtectionProvider dataProtectionProvider)
+public class CartService(
+    IHttpContextAccessor httpContextAccessor,
+    IDataProtectionProvider dataProtectionProvider,
+    ILogger<CartService> logger)
 {
     private const string CartCookieName = "mvp_shop_cart";
     private readonly IDataProtector _protector = dataProtectionProvider.CreateProtector("MvpShop.Cart.Cookie");
@@ -23,6 +26,11 @@ public class CartService(IHttpContextAccessor httpContextAccessor, IDataProtecti
         }
 
         SaveCart(items);
+        logger.LogDebug(
+            "Cart updated: product {ProductId} added, total positions {UniqueItemsCount}, total quantity {TotalQuantity}.",
+            item.ProductId,
+            items.Count,
+            items.Sum(x => x.Quantity));
     }
 
     public void RemoveFromCart(int productId)
@@ -30,6 +38,11 @@ public class CartService(IHttpContextAccessor httpContextAccessor, IDataProtecti
         var items = GetCartItems();
         items.RemoveAll(x => x.ProductId == productId);
         SaveCart(items);
+        logger.LogDebug(
+            "Cart updated: product {ProductId} removed, total positions {UniqueItemsCount}, total quantity {TotalQuantity}.",
+            productId,
+            items.Count,
+            items.Sum(x => x.Quantity));
     }
 
     public void UpdateQuantity(int productId, int quantity)
@@ -52,6 +65,12 @@ public class CartService(IHttpContextAccessor httpContextAccessor, IDataProtecti
         }
 
         SaveCart(items);
+        logger.LogDebug(
+            "Cart updated: product {ProductId} quantity changed to {Quantity}, total positions {UniqueItemsCount}, total quantity {TotalQuantity}.",
+            productId,
+            Math.Max(quantity, 0),
+            items.Count,
+            items.Sum(x => x.Quantity));
     }
 
     public List<CartItem> GetCartItems()
@@ -69,8 +88,9 @@ public class CartService(IHttpContextAccessor httpContextAccessor, IDataProtecti
             var json = _protector.Unprotect(protectedCart);
             return JsonSerializer.Deserialize<List<CartItem>>(json) ?? [];
         }
-        catch
+        catch (Exception exception)
         {
+            logger.LogWarning(exception, "Cart cookie could not be read and was cleared.");
             ClearCart();
             return [];
         }
@@ -80,6 +100,7 @@ public class CartService(IHttpContextAccessor httpContextAccessor, IDataProtecti
     {
         var context = GetHttpContext();
         context.Response.Cookies.Delete(CartCookieName);
+        logger.LogDebug("Cart cleared.");
     }
 
     public int GetTotalQuantity()

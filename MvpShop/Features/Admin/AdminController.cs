@@ -4,7 +4,9 @@ using MvpShop.Data;
 
 namespace MvpShop.Features.Admin;
 
-public class AdminController(AppDbContext dbContext) : Controller
+public class AdminController(
+    AppDbContext dbContext,
+    ILogger<AdminController> logger) : Controller
 {
     [HttpGet("admin")]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
@@ -13,6 +15,7 @@ public class AdminController(AppDbContext dbContext) : Controller
             .AsNoTracking()
             .OrderByDescending(x => x.CreatedAt)
             .ToListAsync(cancellationToken);
+        logger.LogInformation("Admin page opened, {ProductsCount} products loaded.", products.Count);
 
         return View(products);
     }
